@@ -30,15 +30,15 @@ impl Move {
 		};
 	}
 
-	fn get_outcome(&self, opponent: Move) -> Outcome {
+	fn play(&self, opponent: Move) -> Outcome {
 		use crate::Outcome::*;
-		if self == &opponent {
-			return Draw;
+		return if self == &opponent {
+			Draw
 		} else if self.beats() == opponent {
-			return Win;
+			Win
 		} else {
-			return Loss;
-		}
+			Loss
+		};
 	}
 }
 
@@ -63,11 +63,11 @@ impl std::str::FromStr for Outcome {
 }
 
 impl Outcome {
-	fn get_move(&self, opponent: Move) -> Move {
+	fn revert(&self, opponent: Move) -> Move {
 		use crate::Move::*;
-		for r#move in [Rock, Paper, Scissors] {
-			if self == &r#move.get_outcome(opponent) {
-				return r#move;
+		for potential_move in [Rock, Paper, Scissors] {
+			if self == &potential_move.play(opponent) {
+				return potential_move;
 			}
 		}
 		unreachable!();
@@ -81,9 +81,9 @@ impl PartA {
 		let mut result = 0;
 		for game in input.lines() {
 			let (opponent, me) = game.split_once(" ").unwrap();
-			let opponent = opponent.parse::<Move>().unwrap();
-			let me = me.parse::<Move>().unwrap();
-			let outcome = me.get_outcome(opponent);
+			let opponent: Move = opponent.parse().unwrap();
+			let me: Move = me.parse().unwrap();
+			let outcome = me.play(opponent);
 			result += me as usize + outcome as usize;
 		}
 		return result;
@@ -97,9 +97,9 @@ impl PartB {
 		let mut result = 0;
 		for game in input.lines() {
 			let (opponent, outcome) = game.split_once(" ").unwrap();
-			let opponent = opponent.parse::<Move>().unwrap();
-			let outcome = outcome.parse::<Outcome>().unwrap();
-			let me = outcome.get_move(opponent);
+			let opponent: Move = opponent.parse().unwrap();
+			let outcome: Outcome = outcome.parse().unwrap();
+			let me = outcome.revert(opponent);
 			result += me as usize + outcome as usize;
 		}
 		return result;
