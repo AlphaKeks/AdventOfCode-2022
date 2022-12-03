@@ -25,8 +25,8 @@ impl PartA {
 	pub fn solve(input: &str) -> usize {
 		return input
 			.lines()
-			.map(|rucksack| rucksack.split_at(rucksack.len() / 2))
-			.map(|(left, right)| {
+			.map(|rucksack| {
+				let (left, right) = rucksack.split_at(rucksack.len() / 2);
 				let left: HashSet<char> = left.chars().collect();
 				right.chars().find(|char| left.contains(&char)).unwrap()
 			})
