@@ -1,22 +1,10 @@
-fn main() -> anyhow::Result<()> {
-	const INPUT: &str = include_str!("../input.txt");
-
-	let solution_a = PartA::solve(INPUT);
-	println!("Part A: {}", solution_a);
-
-	let solution_b = PartB::solve(INPUT);
-	println!("Part B: {}", solution_b);
-
-	return Ok(());
-}
-
 use std::collections::HashSet;
 
-fn get_priority(char: char) -> usize {
+fn calc_priority(char: char) -> usize {
 	if char.is_lowercase() {
-		return char as usize - 96;
+		char as usize - 96
 	} else {
-		return char as usize - 38;
+		char as usize - 38
 	}
 }
 
@@ -28,9 +16,10 @@ impl PartA {
 			.map(|rucksack| {
 				let (left, right) = rucksack.split_at(rucksack.len() / 2);
 				let left: HashSet<char> = left.chars().collect();
-				right.chars().find(|char| left.contains(&char)).unwrap()
+				// find the overlap
+				let overlap = right.chars().find(|char| left.contains(&char)).unwrap();
+				calc_priority(overlap)
 			})
-			.map(get_priority)
 			.sum();
 	}
 }
@@ -57,12 +46,24 @@ impl PartB {
 			.map(|group| {
 				// first rucksack
 				let a: HashSet<char> = group[0].chars().collect();
-				// filter out all the non-common letters
+				// filter out all non-common letters
 				let b: HashSet<char> = group[1].chars().filter(|char| a.contains(char)).collect();
 				// find the remaining overlap
-				group[2].chars().find(|char| b.contains(char)).unwrap()
+				let overlap = group[2].chars().find(|char| b.contains(char)).unwrap();
+				calc_priority(overlap)
 			})
-			.map(get_priority)
 			.sum();
 	}
+}
+
+fn main() -> anyhow::Result<()> {
+	let input = std::fs::read_to_string("input.txt")?;
+
+	let solution_a = PartA::solve(&input);
+	println!("Part A: {}", solution_a);
+
+	let solution_b = PartB::solve(&input);
+	println!("Part B: {}", solution_b);
+
+	return Ok(());
 }
