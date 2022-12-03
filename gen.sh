@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-if [ $# -eq 0 ]
-  then
-    echo "Please specify a day."
+if [ $# -eq 0 ]; then
+	echo "Please specify a day."
 	exit 1
 fi
 
