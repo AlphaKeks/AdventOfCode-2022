@@ -34,23 +34,19 @@ impl PartB {
 		let mut groups: Vec<[&str; 3]> = Vec::new();
 		let mut current = ["", "", ""];
 
-		// divide all rucksacks into groups of 3
-		// nightly would allow me to call .array_chunk::<3>()
-		// but that would be cheating... right?
 		for (i, line) in input.lines().enumerate() {
 			let i = i % 3;
 			if i == 2 {
 				current[i] = line;
 				groups.push(current);
 				current = ["", "", ""];
+				continue;
 			}
 			current[i] = line;
 		}
-		drop(current);
 
 		return groups
 			.into_iter()
-			// .array_chunks::<3>() // I wish this was stable
 			.map(|[a, b, c]| {
 				// first rucksack
 				let a: HashSet<char> = a.chars().collect();
