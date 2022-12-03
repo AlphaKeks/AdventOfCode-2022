@@ -1,15 +1,18 @@
+#![allow(dead_code)]
+
 use std::collections::HashSet;
 
 fn calc_priority(char: char) -> usize {
-	if char.is_lowercase() {
-		char as usize - 96
-	} else {
+	if char.is_uppercase() {
 		char as usize - 38
+	} else {
+		char as usize - 96
 	}
 }
 
 struct PartA;
 impl PartA {
+	#[allow(unused_variables)]
 	pub fn solve(input: &str) -> usize {
 		return input
 			.lines()
@@ -26,44 +29,75 @@ impl PartA {
 
 struct PartB;
 impl PartB {
+	#[allow(unused_variables)]
 	pub fn solve(input: &str) -> usize {
 		let mut groups: Vec<[&str; 3]> = Vec::new();
 		let mut current = ["", "", ""];
 
 		// divide all rucksacks into groups of 3
+		// nightly would allow me to call .array_chunk::<3>()
+		// but that would be cheating... right?
 		for (i, line) in input.lines().enumerate() {
-			if i % 3 == 2 {
-				current[i % 3] = line;
+			let i = i % 3;
+			if i == 2 {
+				current[i] = line;
 				groups.push(current);
 				current = ["", "", ""];
 			}
-			current[i % 3] = line;
+			current[i] = line;
 		}
 		drop(current);
 
 		return groups
 			.into_iter()
-			.map(|group| {
+			// .array_chunks::<3>() // I wish this was stable
+			.map(|[a, b, c]| {
 				// first rucksack
-				let a: HashSet<char> = group[0].chars().collect();
-				// filter out all non-common letters
-				let b: HashSet<char> = group[1].chars().filter(|char| a.contains(char)).collect();
+				let a: HashSet<char> = a.chars().collect();
+				// filter out non-common letters
+				let b: HashSet<char> = b.chars().filter(|char| a.contains(char)).collect();
 				// find the remaining overlap
-				let overlap = group[2].chars().find(|char| b.contains(char)).unwrap();
+				let overlap = c.chars().find(|char| b.contains(char)).unwrap();
 				calc_priority(overlap)
 			})
 			.sum();
 	}
 }
 
+#[allow(unused_variables)]
 fn main() -> anyhow::Result<()> {
 	let input = std::fs::read_to_string("input.txt")?;
 
-	let solution_a = PartA::solve(&input);
-	println!("Part A: {}", solution_a);
+	let result_a = PartA::solve(&input);
+	println!("PartA: {:?}", result_a);
 
-	let solution_b = PartB::solve(&input);
-	println!("Part B: {}", solution_b);
+	let result_b = PartB::solve(&input);
+	println!("PartB: {:?}", result_b);
 
 	return Ok(());
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn part_a() -> anyhow::Result<()> {
+		let input = std::fs::read_to_string("test_input.txt")?;
+		let result = PartA::solve(&input);
+
+		assert_eq!(157, result);
+
+		return Ok(());
+	}
+
+	#[test]
+	fn part_b() -> anyhow::Result<()> {
+		let input = std::fs::read_to_string("test_input.txt")?;
+		let result = PartB::solve(&input);
+
+		assert_eq!(70, result);
+
+		return Ok(());
+	}
 }

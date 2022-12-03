@@ -1,99 +1,69 @@
-fn main() -> anyhow::Result<()> {
-	const INPUT: &str = include_str!("../input.txt");
+#![allow(dead_code)]
 
-	let result_a = PartA::solution(INPUT);
-	println!("Part A: {:?}", result_a);
-
-	let result_b = PartB::solution(INPUT);
-	println!("Part B: {:?}", result_b);
-
-	return Ok(());
+fn calc_calories(input: &str) -> Vec<usize> {
+	return input
+		.trim() // just to be sure
+		.split("\n\n") // split into elves
+		.map(|elf| {
+			elf.lines() // iterate over each food item
+				.filter_map(|calories| calories.parse::<usize>().ok()) // parse calories into numbers
+				.sum() // sum all calories together
+		})
+		.collect::<Vec<usize>>();
 }
 
 struct PartA;
 impl PartA {
-	pub fn solution(input: &str) -> i32 {
-		return input
-			.trim() // remove whitespaces
-			.split("\n\n") // split at empty lines
-			.map(|elf| elf.lines().map(|num| num.parse::<i32>().unwrap()).sum()) // sum all numbers per elf
-			.max() // get the highest number
-			.unwrap();
+	#[allow(unused_variables)]
+	pub fn solve(input: &str) -> usize {
+		return calc_calories(input).into_iter().max().unwrap_or(0); // get the elf with the highest total calorie count
 	}
 }
 
 struct PartB;
 impl PartB {
-	pub fn solution(input: &str) -> i32 {
-		let mut all_nums = input
-			.trim() // remove whitespaces
-			.split("\n\n") // split at empty lines
-			.map(|elf| elf.lines().map(|num| num.parse::<i32>().unwrap()).sum()) // sum all numbers per elf
-			.collect::<Vec<i32>>();
-		all_nums.sort_by(|a, b| b.cmp(a)); // sort from highest to lowest
-		return all_nums.into_iter().take(3).sum(); // take the largest 3 elements and sum them up
+	#[allow(unused_variables)]
+	pub fn solve(input: &str) -> usize {
+		let mut all_calories = calc_calories(input);
+		all_calories.sort_by(|a, b| b.cmp(a)); // sort in descending order
+		return all_calories.into_iter().take(3).sum(); // return top 3 calorie
 	}
 }
 
-/* Part A
-	pub fn solution_naive(input: &str) -> i32 {
-		let mut max = 0;
-		let mut tmp = 0;
+#[allow(unused_variables)]
+fn main() -> anyhow::Result<()> {
+	let input = std::fs::read_to_string("input.txt")?;
 
-		input.lines().map(|ln| ln.trim()).for_each(|ln| {
-			if let Ok(num) = ln.parse::<i32>() {
-				tmp += num;
-			} else {
-				if tmp > max {
-					max = tmp;
-				}
-				tmp = 0;
-			}
-		});
+	let result_a = PartA::solve(&input);
+	println!("PartA: {:?}", result_a);
 
-		return max;
+	let result_b = PartB::solve(&input);
+	println!("PartB: {:?}", result_b);
+
+	return Ok(());
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn part_a() -> anyhow::Result<()> {
+		let input = std::fs::read_to_string("test_input.txt")?;
+		let result = PartA::solve(&input);
+
+		assert_eq!(24000, result);
+
+		return Ok(());
 	}
 
-*/
+	#[test]
+	fn part_b() -> anyhow::Result<()> {
+		let input = std::fs::read_to_string("test_input.txt")?;
+		let result = PartB::solve(&input);
 
-/* Part B
-	pub fn solution_bad(input: &str) -> i32 {
-		let mut all_nums = Vec::new();
-		let mut tmp = 0;
+		assert_eq!(45000, result);
 
-		input.lines().map(|ln| ln.trim()).for_each(|ln| {
-			if let Ok(num) = ln.parse::<i32>() {
-				tmp += num;
-			} else {
-				all_nums.push(tmp);
-				tmp = 0;
-			}
-		});
-
-		all_nums.sort_unstable();
-
-		return all_nums[all_nums.len() - 3..all_nums.len()].into_iter().sum();
+		return Ok(());
 	}
-
-	pub fn solution_better(input: &str) -> i32 {
-		let mut top3 = [0; 3];
-		let mut tmp = 0;
-
-		input.lines().map(|ln| ln.trim()).for_each(|ln| {
-			if let Ok(num) = ln.parse::<i32>() {
-				tmp += num;
-			} else {
-				for num in top3.iter_mut() {
-					if tmp > *num {
-						*num = tmp;
-						break;
-					}
-				}
-				tmp = 0;
-			}
-		});
-
-		return top3.into_iter().sum();
-	}
-
-*/
+}
