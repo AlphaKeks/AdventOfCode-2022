@@ -9,10 +9,8 @@ enum Move {
 
 impl std::str::FromStr for Move {
 	type Err = &'static str;
-
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		use crate::Move::*;
-
 		return match s {
 			"A" | "X" => Ok(Rock),
 			"B" | "Y" => Ok(Paper),
@@ -25,7 +23,6 @@ impl std::str::FromStr for Move {
 impl Move {
 	fn beats(&self) -> Move {
 		use crate::Move::*;
-
 		return match self {
 			Rock => Scissors,
 			Paper => Rock,
@@ -35,16 +32,13 @@ impl Move {
 
 	fn get_outcome(&self, opponent: Move) -> Outcome {
 		use crate::Outcome::*;
-
 		if self == &opponent {
 			return Draw;
-		}
-
-		if self.beats() == opponent {
+		} else if self.beats() == opponent {
 			return Win;
+		} else {
+			return Loss;
 		}
-
-		return Loss;
 	}
 }
 
@@ -57,10 +51,8 @@ enum Outcome {
 
 impl std::str::FromStr for Outcome {
 	type Err = &'static str;
-
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		use crate::Outcome::*;
-
 		return match s {
 			"X" => Ok(Loss),
 			"Y" => Ok(Draw),
@@ -73,13 +65,12 @@ impl std::str::FromStr for Outcome {
 impl Outcome {
 	fn get_move(&self, opponent: Move) -> Move {
 		use crate::Move::*;
-
 		for r#move in [Rock, Paper, Scissors] {
 			if self == &r#move.get_outcome(opponent) {
 				return r#move;
 			}
 		}
-		unreachable!()
+		unreachable!();
 	}
 }
 
@@ -95,7 +86,6 @@ impl PartA {
 			let outcome = me.get_outcome(opponent);
 			result += me as usize + outcome as usize;
 		}
-
 		return result;
 	}
 }
@@ -112,7 +102,6 @@ impl PartB {
 			let me = outcome.get_move(opponent);
 			result += me as usize + outcome as usize;
 		}
-
 		return result;
 	}
 }
