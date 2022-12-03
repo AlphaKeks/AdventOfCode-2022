@@ -1,22 +1,21 @@
 #![allow(dead_code)]
 
-struct PartA;
-struct PartB;
-
 fn main() -> anyhow::Result<()> {
 	const INPUT: &str = include_str!("../input.txt");
 
 	return Ok(());
 }
 
+struct PartA;
 impl PartA {
-	pub fn solution(input: &str) -> todo!() {
-		todo!();
+	pub fn solve(input: &str) -> usize {
+		return 0;
 	}
 }
 
+struct PartB;
 impl PartB {
-	pub fn solution(input: &str) -> todo!() {
-		todo!();
+	pub fn solve(input: &str) -> usize {
+		return 0;
 	}
 }
