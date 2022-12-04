@@ -23,9 +23,11 @@ impl PartA {
 		for line in input.lines() {
 			let (left, right) = line_to_ranges(line);
 
-			if left.contains(&right.start()) && left.contains(&right.end())
-				|| right.contains(&left.start()) && right.contains(&left.end())
+			if left == right
+				|| (left.start() <= right.start() && left.end() >= right.end())
+				|| (right.start() <= left.start() && right.end() >= left.end())
 			{
+				dbg!(left, right);
 				count += 1;
 			}
 		}
