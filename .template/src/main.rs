@@ -34,7 +34,6 @@ mod tests {
 	use super::*;
 
 	#[test]
-	#[ignore]
 	fn part_a() -> anyhow::Result<()> {
 		let input = std::fs::read_to_string("test_input.txt")?;
 		let result = PartA::solve(&input);
