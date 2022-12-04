@@ -27,7 +27,6 @@ impl PartA {
 				|| (left.start() <= right.start() && left.end() >= right.end())
 				|| (right.start() <= left.start() && right.end() >= left.end())
 			{
-				dbg!(left, right);
 				count += 1;
 			}
 		}
