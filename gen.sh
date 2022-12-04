@@ -8,3 +8,4 @@ fi
 cp -r "./.template/" "./day_$1"
 sed -i "s/^]/\t\"day_$1\",\n\]/" "./Cargo.toml"
 sed -i "s/day_x/day_$1/" "./day_$1/Cargo.toml"
+echo $(curl "https://adventofcode.com/2022/day/$1/input") > "./day_$1/input.txt"
