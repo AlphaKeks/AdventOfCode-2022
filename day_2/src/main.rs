@@ -1,76 +1,79 @@
 #![allow(dead_code)]
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+const AOC: &str = "AOC rules";
+
+#[derive(Clone, Copy, PartialEq)]
 enum Move {
 	Rock = 1,
 	Paper = 2,
 	Scissors = 3,
 }
 
+use Move::*;
+
 impl std::str::FromStr for Move {
-	type Err = &'static str;
+	type Err = std::convert::Infallible;
+
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		use crate::Move::*;
-		return match s {
+		match s {
 			"A" | "X" => Ok(Rock),
 			"B" | "Y" => Ok(Paper),
 			"C" | "Z" => Ok(Scissors),
-			_ => Err("Expected valid move."),
-		};
+			_ => unreachable!("{AOC}"),
+		}
 	}
 }
 
 impl Move {
 	fn beats(&self) -> Move {
-		use crate::Move::*;
-		return match self {
+		match self {
 			Rock => Scissors,
 			Paper => Rock,
 			Scissors => Paper,
-		};
+		}
 	}
 
 	fn play(&self, opponent: Move) -> Outcome {
-		use crate::Outcome::*;
-		return if self == &opponent {
-			Draw
+		if self == &opponent {
+			return Draw;
 		} else if self.beats() == opponent {
-			Win
-		} else {
-			Loss
-		};
+			return Win;
+		}
+
+		Loss
 	}
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(PartialEq)]
 enum Outcome {
 	Loss = 0,
 	Draw = 3,
 	Win = 6,
 }
 
+use Outcome::*;
+
 impl std::str::FromStr for Outcome {
-	type Err = &'static str;
+	type Err = std::convert::Infallible;
+
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		use crate::Outcome::*;
-		return match s {
+		match s {
 			"X" => Ok(Loss),
 			"Y" => Ok(Draw),
 			"Z" => Ok(Win),
-			_ => Err("Expected valid outcome."),
-		};
+			_ => unreachable!("{AOC}"),
+		}
 	}
 }
 
 impl Outcome {
-	fn revert(&self, opponent: Move) -> Move {
-		use crate::Move::*;
+	fn compute_move(&self, opponent: Move) -> Move {
 		for potential_move in [Rock, Paper, Scissors] {
-			if self == &potential_move.play(opponent) {
+			if &potential_move.play(opponent) == self {
 				return potential_move;
 			}
 		}
-		unreachable!();
+		unreachable!("{AOC}");
 	}
 }
 
@@ -79,14 +82,16 @@ impl PartA {
 	#[allow(unused_variables)]
 	pub fn solve(input: &str) -> usize {
 		let mut result = 0;
+
 		for game in input.lines() {
-			let (opponent, me) = game.split_once(" ").unwrap();
-			let opponent: Move = opponent.parse().unwrap();
-			let me: Move = me.parse().unwrap();
+			let (opponent, me) = game.split_once(' ').expect("{AOC}");
+			let opponent: Move = opponent.parse().expect("{AOC}");
+			let me: Move = me.parse().expect("{AOC}");
 			let outcome = me.play(opponent);
 			result += me as usize + outcome as usize;
 		}
-		return result;
+
+		result
 	}
 }
 
@@ -95,14 +100,16 @@ impl PartB {
 	#[allow(unused_variables)]
 	pub fn solve(input: &str) -> usize {
 		let mut result = 0;
+
 		for game in input.lines() {
-			let (opponent, outcome) = game.split_once(" ").unwrap();
-			let opponent: Move = opponent.parse().unwrap();
-			let outcome: Outcome = outcome.parse().unwrap();
-			let me = outcome.revert(opponent);
+			let (opponent, outcome) = game.split_once(' ').expect("{AOC}");
+			let opponent: Move = opponent.parse().expect("{AOC}");
+			let outcome: Outcome = outcome.parse().expect("{AOC}");
+			let me = outcome.compute_move(opponent);
 			result += me as usize + outcome as usize;
 		}
-		return result;
+
+		result
 	}
 }
 
@@ -116,7 +123,7 @@ fn main() -> anyhow::Result<()> {
 	let result_b = PartB::solve(&input);
 	println!("PartB: {:?}", result_b);
 
-	return Ok(());
+	Ok(())
 }
 
 #[cfg(test)]
@@ -130,7 +137,7 @@ mod tests {
 
 		assert_eq!(15, result);
 
-		return Ok(());
+		Ok(())
 	}
 
 	#[test]
@@ -140,6 +147,6 @@ mod tests {
 
 		assert_eq!(12, result);
 
-		return Ok(());
+		Ok(())
 	}
 }
